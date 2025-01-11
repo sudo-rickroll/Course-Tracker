@@ -17,7 +17,7 @@ const courseSchema = new mongoose.Schema({
 
 courseSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id
+        returnedObject.id = returnedObject._id.toString()
         delete returnedObject.__v
         delete returnedObject._id
     }

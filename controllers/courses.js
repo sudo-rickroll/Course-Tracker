@@ -1,21 +1,15 @@
+require('express-sync-errors')
 const router = require('express').Router()
 const Course = require('../models/course.js')
 
-router.get('/', (request, response, next) => {
-    Course.find({})
-        .then(data => {
-            response.status(200).json(data)
-        })
-        .catch(error => next(error))
+router.get('/', async (request, response) => {
+    const course = await Course.find({})
+    response.status(200).json(course)
 })
 
-router.post('/', (request, response, next) => {
-    new Course(request.body).save()
-        .then(result => {
-            response.status(200).json(result)
-        })
-        .catch(error => next(error))
-
+router.post('/', async (request, response) => {
+    const course = await new Course(request.body).save()
+    response.status(201).json(course)
 })
 
 module.exports = router

@@ -11,7 +11,7 @@ mongoose.connect(config.mongodb_uri).then(() => logger.info('Connected to databa
 app.use(express.json());
 app.use(express.static('dist'))
 app.use(middleware.enableCors())
-app.use(middleware.requestLogger())
+process.env.NODE_ENV==='prod' ? app.use(middleware.requestLogger()) : null
 
 app.use('/api/courses/', courseRouter)
 
