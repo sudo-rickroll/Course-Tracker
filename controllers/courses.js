@@ -1,4 +1,4 @@
-require('express-sync-errors')
+require('express-async-errors')
 const router = require('express').Router()
 const Course = require('../models/course.js')
 
