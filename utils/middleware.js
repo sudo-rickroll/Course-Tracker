@@ -11,20 +11,25 @@ const requestLogger = () => {
 
 const unknownHandler = (request, response, next) => {
     next({
-        status: 404,
+        status: 501,
         error: 'Unknown endpoint'
     })
 }
 
-const errorHandler = (error, request, response) => {
-    logger.error(error.error || error.message)
-    if(error.status === 404){
-        response.status(404).send({
-            error: error.message || 'Resource not found'
+const errorHandler = (error, request, response, next) => {
+    logger.error('Error: ', error.error || error.message)
+    if(error.name === 'ValidationError'){
+        response.status(400).end()
+        return
+    }
+    if(error.status === 501){
+        response.status(501).send({
+            error: error.message || 'Endpoint not recognised'
         })
         return
     }
     response.status(500).end()
+    next(error)
 }
 
 module.exports = {

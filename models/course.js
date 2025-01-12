@@ -3,12 +3,14 @@ const mongoose = require('mongoose')
 const courseSchema = new mongoose.Schema({
     title: {
         type: String,
+        required: true
     },
     author: {
         type: String,
     },
     url: {
         type: String,
+        required: true
     },
     hours: {
         type: Number,

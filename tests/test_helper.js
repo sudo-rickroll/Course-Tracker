@@ -24,27 +24,30 @@ const courses = [
         author: 'Rohan Shravan',
         url: 'https://theschoolof.ai/',
         hours: 40
+    },
+    {
+        title: 'EMLOPS V1',
+        author: 'Rohan Shravan',
+        url: 'https://theschoolof.ai/'
     }
 ]
 
-const createCourses = async () => {
-    const course1 = new Course(courses[0])
-    const savedCourse = await course1.save()
-    return [savedCourse.toJSON()]
-}
+const createCourses = async () => await Course.insertMany(courses)
 
-const deleteAllCourses = async () => {
-    await Course.deleteMany({})
-}
+const deleteAllCourses = async () => await Course.deleteMany({})
+
 
 const findAllCourses = async () => {
     const addedCourses = await Course.find({})
-    return addedCourses.map(course => course.toJSON())
+    return addedCourses
 }
+
+const findCourseById = async id => await Course.findById(id)
 
 module.exports = {
     courses,
     createCourses,
     deleteAllCourses,
-    findAllCourses
+    findAllCourses,
+    findCourseById
 }
