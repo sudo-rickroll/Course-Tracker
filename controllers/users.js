@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const config = require('../utils/config.js')
 
 userRouter.get('/', async (request, response) => {
-    const users = await User.find({})
+    const users = await User.find({}).populate('courses')
     response.status(200).json(users)
 
 })
@@ -36,6 +36,11 @@ userRouter.post('/', async (request, response, next) => {
 
     response.status(201).send(`User ${username} created successfully`)
 
+})
+
+userRouter.delete('/:id', async (request, response) => {
+    await User.findByIdAndDelete(request.params.id)
+    response.status(204).end()
 })
 
 module.exports = userRouter
