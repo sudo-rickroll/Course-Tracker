@@ -19,7 +19,11 @@ const unknownHandler = (request, response, next) => {
 const errorHandler = (error, request, response, next) => {
     logger.error('Error: ', error.error || error.message)
     if(error.name === 'ValidationError'){
-        response.status(400).end()
+        response.status(400).send('Fields marked required cannot be empty')
+        return
+    }
+    if(error.name === 'PasswordLengthError'){
+        response.status(400).send('Password cannot be less than 3 characters long')
         return
     }
     if(error.status === 501){

@@ -15,6 +15,10 @@ const courseSchema = new mongoose.Schema({
     hours: {
         type: Number,
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 })
 
 courseSchema.set('toJSON', {
