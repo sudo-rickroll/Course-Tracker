@@ -2,6 +2,7 @@ const express = require('express')
 require('express-async-errors')
 const middleware = require('./utils/middleware.js')
 const mongoose = require('mongoose')
+const loginRouter = require('./controllers/login.js')
 const userRouter = require('./controllers/users.js')
 const courseRouter = require('./controllers/courses.js')
 const config = require('./utils/config.js')
@@ -13,8 +14,9 @@ mongoose.connect(config.mongodb_uri).then(() => logger.info('Connected to databa
 app.use(express.json())
 app.use(express.static('dist'))
 app.use(middleware.enableCors())
-if(process.env.NODE_ENV!=='test') app.use(middleware.requestLogger())
+process.env.NODE_ENV!=='test'? app.use(middleware.requestLogger()) : null
 
+app.use('/api/login/', loginRouter)
 app.use('/api/users/', userRouter)
 app.use('/api/courses/', courseRouter)
 

@@ -26,6 +26,10 @@ const errorHandler = (error, request, response, next) => {
         response.status(400).send('Password cannot be less than 3 characters long')
         return
     }
+    if(error.name === 'AuthenticationError'){
+        response.status(400).send('Username or Password incorrect')
+        return
+    }
     if(error.status === 501){
         response.status(501).send({
             error: error.message || 'Endpoint not recognised'

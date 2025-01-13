@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    notes: [
+    courses: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Course'

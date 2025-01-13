@@ -14,6 +14,8 @@ courseRouter.post('/', async (request, response) => {
         hours: request.body.hours || 0,
         user: user.id
     }).save()
+    user.courses = user.courses.concat(course.id)
+    await user.save()
     response.status(201).json(course)
 })
 
