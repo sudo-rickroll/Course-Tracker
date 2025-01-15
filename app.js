@@ -15,10 +15,10 @@ app.use(express.json())
 app.use(express.static('dist'))
 app.use(middleware.enableCors())
 process.env.NODE_ENV!=='test'? app.use(middleware.requestLogger()) : null
-
+app.use(middleware.tokenExtractor)
 app.use('/api/login/', loginRouter)
 app.use('/api/users/', userRouter)
-app.use('/api/courses/', courseRouter)
+app.use('/api/courses/', middleware.userExtractor, courseRouter)
 
 app.use(middleware.unknownHandler)
 app.use(middleware.errorHandler)

@@ -6,11 +6,11 @@ const app = require('../app.js')
 const supertest = require('supertest')
 const api = supertest(app)
 
-describe('GET API tests', () => {
-    beforeEach(async () => {
-        await test_helper.deleteAllUsers()
-        await test_helper.createUsers()
-    })
+beforeEach(async () => {
+    await test_helper.deleteAllUsers()
+    await test_helper.createUsers()
+})
+describe('User GET API tests', () => {
     test('Response status', async () => {
         await api.get('/api/users').expect(200).expect('Content-Type', /application\/json/)
     })
@@ -21,8 +21,8 @@ describe('GET API tests', () => {
     })
 })
 
-describe('POST Api tests', () => {
-    test.only('Missing password', async () => {
+describe('User POST Api tests', () => {
+    test('Missing password', async () => {
         await api.post('/api/users').send(test_helper.invalidUsers[0]).expect(400).expect(/cannot be empty/)
     })
 })

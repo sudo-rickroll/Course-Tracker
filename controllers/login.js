@@ -4,7 +4,7 @@ const config = require('../utils/config.js')
 const User = require('../models/user.js')
 const bcrypt = require('bcrypt')
 
-loginRouter.post('/', async (request, response, next) =>{
+loginRouter.post('/', async (request, response, next) => {
     const { username, password } = request.body
     if(!(username && password)){
         next({
@@ -14,7 +14,7 @@ loginRouter.post('/', async (request, response, next) =>{
     const user = await User.findOne({ username })
     const tokenUser = {
         username: user?.username,
-        name: user?.name
+        id: user?._id.toString()
     }
     const authToken = await bcrypt.compare(password, user.passwordHash) ? jwt.sign(tokenUser, config.secret) : null
     if(!(user && authToken)){

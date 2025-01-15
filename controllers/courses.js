@@ -7,21 +7,46 @@ courseRouter.get('/', async (request, response) => {
     response.status(200).json(course)
 })
 
-courseRouter.post('/', async (request, response) => {
-    const user = await User.findOne({})
+courseRouter.post('/', async (request, response, next) => {
+    if(!request.user){
+        return next({
+            name: 'AuthorizationError'
+        })
+    }
     const course = await new Course({
         ...request.body,
         hours: request.body.hours || 0,
-        user: user.id
+        user: request.user
     }).save()
+
+    const user = await User.findById(request.user)
     user.courses = user.courses.concat(course.id)
     await user.save()
     response.status(201).json(course)
 })
 
-courseRouter.delete('/:id', async (request, response) => {
-    await Course.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+courseRouter.delete('/:id', async (request, response, next) => {
+    if(request.user){
+        const course = await Course.findById(request.params.id)
+        if(!course){
+            return next({
+                name:'NotFoundError'
+            })
+        }
+        if(course.user?.toString() === request.user) {
+            await Course.findOneAndDelete(course)
+            const user = await User.findById(request.user)
+            user.courses = user.courses.filter(course => course._id.toString() !== request.params.id)
+            await user.save()
+            return response.status(204).end()
+        }
+        return next({
+            name: 'AuthorizationError'
+        })
+    }
+    return next({
+        name: 'JsonWebTokenError'
+    })
 })
 
 courseRouter.put('/:id', async (request, response) => {

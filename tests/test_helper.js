@@ -1,6 +1,8 @@
 const Course = require('../models/course.js')
 const User = require('../models/user.js')
 const bcrypt = require('bcrypt')
+const config = require('../utils/config.js')
+const jwt = require('jsonwebtoken')
 
 const courses = [
     {
@@ -59,6 +61,8 @@ const invalidUsers = [{
 
 const createCourses = async () => await Course.insertMany(courses)
 
+const createACourse = async (course) => await new Course(course).save()
+
 const createUsers = async () => {
     const usersToBeSaved = await Promise.all(users.map(async user => {
         return {
@@ -79,6 +83,8 @@ const findAllCourses = async () => {
     return addedCourses
 }
 
+const findACourse = async (query) => await Course.findOne(query)
+
 const findAllUsers = async () => {
     const addedUsers = await User.find({})
     return addedUsers
@@ -88,16 +94,30 @@ const findCourseById = async id => await Course.findById(id)
 
 const findUserById = async id => await User.findById(id)
 
+const getToken = async () => {
+    const hash = await bcrypt.hash(users[0].password, 1)
+    const savedUser = await new User({ username: users[0]. username, name: users[0].name, passwordHash: hash }).save()
+    return jwt.sign({username: savedUser.username, id: savedUser._id.toString()}, config.secret)
+}
+
+const decodeToken = (token) => {
+    return jwt.verify(token, config.secret)
+}
+
 module.exports = {
     courses,
     users,
     invalidUsers,
     createCourses,
+    createACourse,
     createUsers,
     deleteAllCourses,
     deleteAllUsers,
     findAllCourses,
+    findACourse,
     findAllUsers,
     findCourseById,
-    findUserById
+    findUserById,
+    getToken,
+    decodeToken
 }

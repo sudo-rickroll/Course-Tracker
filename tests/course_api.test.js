@@ -1,104 +1,68 @@
-const { describe, test, beforeEach, after } = require('node:test')
-const assert = require('node:assert')
 const supertest = require('supertest')
 const app = require('../app.js')
-const test_helper = require('./test_helper.js')
-const mongoose = require('mongoose')
 const api = supertest(app)
+const { beforeEach, describe, test, after } = require('node:test')
+const assert = require('node:assert')
+const mongoose = require('mongoose')
+const test_helper = require('./test_helper.js')
 
 
-describe('Helper test module', () => {
+describe('Login and action sequence', () => {
+    let token = ''
 
-    test('list_helper_test', async function(){
-        await test_helper.deleteAllCourses()
-        const savedCourses = await test_helper.createCourses()
-        assert.strictEqual(savedCourses.length, test_helper.courses.length)
-    })
-})
-
-describe('Get API Tests', () => {
     beforeEach(async () => {
-        await test_helper.deleteAllCourses()
-        await test_helper.createCourses()
+        await test_helper.deleteAllUsers()
+        token = await test_helper.getToken()
     })
-
-    test('Response status', async () => {
-        await api.get('/api/courses').expect(200).expect('Content-Type', /application\/json/)
+    test('Create user', async () => {
+        await test_helper.deleteAllUsers()
+        await api.post('/api/users').send(test_helper.users[1]).expect(201)
     })
-    test('Response data', async () => {
-        const savedCourses = await api.get('/api/courses')
-        const listCourses = await test_helper.findAllCourses()
-        assert.strictEqual(savedCourses.body.length, listCourses.length)
+    test('Login User', async () => {
+        const userAuth = await api.post('/api/login').send({
+            username: test_helper.users[0].username,
+            password: test_helper.users[0].password
+        }).expect(200)
+        assert('username' in userAuth.body)
     })
-    test('Response data content', async () => {
-        const savedCourses = await api.get('/api/courses')
-        assert('id' in savedCourses.body[0] && !('_id' in savedCourses.body[0]))
+    test('Create course succeeds', async () => {
+        await api.post('/api/courses').set('Authorization', `Bearer ${token}`).send({
+            title: `Test Course with ${test_helper.users[0].username}`,
+            url: 'http://localhost:3001/'
+        }).expect(201)
     })
-})
-
-describe('Post API Requests', () => {
-    beforeEach(async () => {
-        await test_helper.deleteAllCourses()
-        await test_helper.createCourses()
+    test('Create course fails without token', async () => {
+        await api.post('/api/courses').send({
+            title: `Test Course with ${test_helper.users[0].username}`,
+            url: 'http://localhost:3001/'
+        }).expect(400)
     })
-    test('Response status', async () => {
-        await api.post('/api/courses').send(test_helper.courses[1]).expect(201).expect('Content-Type', /application\/json/)
+    test('Get courses succeeds', async () => {
+        const apiCourses = await api.get('/api/courses').set('Authorization', `Bearer ${token}`).expect(200)
+        const mongoCourses = await test_helper.findAllCourses()
+        assert.strictEqual(apiCourses.body.length, mongoCourses.length)
     })
-    test('Data created successfully', async () => {
-        const courses_before = await test_helper.findAllCourses()
-        await api.post('/api/courses').send(test_helper.courses[1])
-        const courses_after = await test_helper.findAllCourses()
-        assert.strictEqual(courses_before.length + 1, courses_after.length)
+    test('Get courses fails', async () => {
+        await api.get('/api/courses').expect(400)
     })
-    test('Data created\'s content', async () => {
-        const addedCourse = await api.post('/api/courses').send(test_helper.courses[1])
-        assert.deepStrictEqual(addedCourse.body, { ...test_helper.courses[1], id: addedCourse.body.id })
+    test('Delete course succeeds if user is owner', async () => {
+        const user = test_helper.decodeToken(token)
+        const course = await test_helper.createACourse({
+            title: `Test Course with ${test_helper.users[0].username}`,
+            url: 'http://localhost:3001/',
+            user: user.id
+        })
+        await api.delete(`/api/courses/${course.id.toString()}`).set('Authorization', `Bearer ${token}`).expect(204)
     })
-    test('Likes missing', async () => {
-        const savedCourse = await api.post('/api/courses').send(test_helper.courses.find(course => course.title === 'EMLOPS V1' ))
-        assert(savedCourse.body.hours === 0)
-    })
-    test('Missing required properties', async () => {
-        await api.post('/api/courses').send({ author: 'Anonymous', hours: 45 }).expect(400)
-    })
-})
-
-describe('Delete api requests', () => {
-    beforeEach(async () => {
-        await test_helper.deleteAllCourses()
-        await test_helper.createCourses()
-    })
-    test('Response status', async () => {
-        const courses = await api.get('/api/courses')
-        await api.delete(`/api/courses/${courses.body[courses.body.length - 1].id}`).expect(204)
-    })
-    test('Remaining content after delete', async () => {
-        const beforeDelete = await test_helper.findAllCourses()
-        await api.delete(`/api/courses/${beforeDelete[beforeDelete.length - 1].id}`)
-        const afterDelete = await test_helper.findAllCourses()
-        assert.strictEqual(beforeDelete.length, afterDelete.length + 1)
-    })
-
-})
-
-describe('Put api requests', () => {
-    beforeEach(async () => {
-        await test_helper.deleteAllCourses()
-        await test_helper.createCourses()
-    })
-    test('Response status', async () => {
-        const savedCourses = (await test_helper.findAllCourses()).map(course => course.toJSON())
-        await api.put(`/api/courses/${savedCourses[savedCourses.length - 1].id}`).send(test_helper.courses[test_helper.courses.length - 2]).expect(200)
-    })
-    test('Response content', async () => {
-        const savedCourses = (await test_helper.findAllCourses()).map(course => course.toJSON())
-        await api.put(`/api/courses/${savedCourses[savedCourses.length - 1].id}`).send(test_helper.courses[test_helper.courses.length - 2])
-        const updatedCourse = (await test_helper.findCourseById(savedCourses[savedCourses.length - 1].id)).toJSON()
-        assert.deepStrictEqual(updatedCourse, { ...test_helper.courses[test_helper.courses.length - 2], id: updatedCourse.id })
-
+    test('Delete course fails if user is not the owner', async () => {
+        const user = test_helper.decodeToken(token)
+        const course = await test_helper.findACourse({ user: { $ne: user.id } })
+        await api.delete(`/api/courses/${course._id.toString()}`).set('Authorization', `Bearer ${token}`).expect(400)
     })
 })
 
 after(async () => {
+    await test_helper.deleteAllUsers()
+    await test_helper.deleteAllCourses()
     await mongoose.connection.close()
 })
