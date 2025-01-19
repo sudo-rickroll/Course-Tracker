@@ -1,8 +1,7 @@
 import {useState, useEffect} from 'react'
 import { getCourses, createCourse, updateCourse, deleteCourse } from '../services/course.js'
 import Course from './Course.jsx'
-import CreateCourse from './CreateCourse.jsx'
-import EditCourse from './EditCourse.jsx'
+import CourseForm from './CourseForm.jsx'
 
 const Courses = ({exit}) => {
     const [courses, setCourses] = useState([])
@@ -65,13 +64,13 @@ const Courses = ({exit}) => {
 
     if(newCourse){
         return (
-            <CreateCourse toggleScreen = {toggleNewDisplay} create = {createNewCourse}></CreateCourse>
+            <CourseForm toggleScreen = {toggleNewDisplay} modify = {createNewCourse} course={null}></CourseForm>
         )
     }
 
     if(course?.title){
         return (
-            <EditCourse toggleScreen = {toggleEditDisplay} edit = {editExistingCourse} course={course}></EditCourse>
+            <CourseForm toggleScreen = {toggleEditDisplay} modify = {editExistingCourse} course={course}></CourseForm>
         )
     }
 

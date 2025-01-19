@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import styles from '../styles.js'
 
-const EditCourse = ({toggleScreen, edit, course}) => {
-    const [title, setTitle] = useState(course.title)
-    const [author, setAuthor] = useState(course.author)
-    const [hours, setHours] = useState(course.hours)
-    const [url, setUrl] = useState(course.url)
+const CourseForm = ({toggleScreen, modify, course}) => {
+    const [title, setTitle] = useState(course?.title || '')
+    const [author, setAuthor] = useState(course?.author || '')
+    const [hours, setHours] = useState(course?.hours || 0)
+    const [url, setUrl] = useState(course?.url || '')
     const [validateUrl, setValidateUrl] = useState(false)
 
     const urlRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/[^\s]*)?$/
@@ -18,15 +18,22 @@ const EditCourse = ({toggleScreen, edit, course}) => {
         setUrl(target.value)
     }
 
+    const createNew = async (e) => {
+        e.preventDefault()
+        if(!validateUrl){
+            await modify({title, author, hours, url})
+        }
+    }
+
     const editExisting = async (e) => {
         e.preventDefault()
         if(!validateUrl){
-            await edit({title, author, hours, url})
+            await modify({title, author, hours, url})
         }
     }
 
     return (
-        <form style={styles.formDisplay} onSubmit={editExisting}>
+        <form style={styles.formDisplay} onSubmit={course? editExisting : createNew}>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <label style={{...styles.elementDisplay, ...styles.margin}}>{'Title'}<label style={{...styles.required, ...styles.margin}}>{'*'}</label></label>
                 <input style={styles.margin} value={title} onChange={changeTitle}></input>
@@ -49,11 +56,11 @@ const EditCourse = ({toggleScreen, edit, course}) => {
             </div>
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
-                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>Update</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>{course? 'Update' : 'Create'}</button>
                 <button style={{...styles.elementDisplay, ...styles.margin}} onClick={toggleScreen} type='button'>Back</button>
             </div>
         </form>
     )
 }
 
-export default EditCourse
+export default CourseForm
