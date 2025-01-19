@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken')
 const enableCors = () => cors()
 
 const requestLogger = () => {
-    morgan.token('content', function (request, response) { return JSON.stringify(request.body) })
-    return morgan(':method :url :status :res[content-length] - :response-time ms :content')
+    morgan.token('origin', function (request, response) { return JSON.stringify(request.headers.origin) })
+    return morgan(':method :url :status :res[content-length] - :response-time ms :origin')
 }
 
 const tokenExtractor = async (request, response, next) => {

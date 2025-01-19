@@ -14,6 +14,7 @@ const courseSchema = new mongoose.Schema({
     },
     hours: {
         type: Number,
+        required: true
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
