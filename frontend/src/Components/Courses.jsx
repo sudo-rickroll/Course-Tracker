@@ -3,7 +3,7 @@ import { getCourses, createCourse, updateCourse, deleteCourse } from '../service
 import Course from './Course.jsx'
 import CourseForm from './CourseForm.jsx'
 
-const Courses = ({exit}) => {
+const Courses = ({exit, status}) => {
     const [courses, setCourses] = useState([])
     const [newCourse, setNewCourse] = useState(false)
     const [course, setCourse] = useState(null)
@@ -13,7 +13,7 @@ const Courses = ({exit}) => {
             const data = await getCourses()
             setCourses(data)
         }catch(error){
-            alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
     
@@ -28,6 +28,7 @@ const Courses = ({exit}) => {
         window.localStorage.removeItem('token')
         window.localStorage.removeItem('name')
         exit()
+        status('success', 'Logged out successfully')
     }
 
     const setCourseDetails = (course) => setCourse(course)
@@ -35,20 +36,22 @@ const Courses = ({exit}) => {
     const createNewCourse = async (course) => {
         try{
             await createCourse(course)
+            status('success', `Course "${course.title}" created successfully`)
             refreshCourses()
             toggleNewDisplay()
         }catch(error){
-                alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
 
     const editExistingCourse = async (updatedCourse) => {
         try{
             await updateCourse(course.id, updatedCourse)
+            status('success', `Course "${course.title}" updated successfully`)
             refreshCourses()
             toggleEditDisplay()
         }catch(error){
-                alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
     
@@ -56,9 +59,10 @@ const Courses = ({exit}) => {
         try{
             if(confirm(`Are you sure you want to delete "${course.title}"?`))
             await deleteCourse(course.id)
+            status('success', `Course "${course.title}" deleted successfully`)
             refreshCourses()
         }catch(error){
-                alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
 

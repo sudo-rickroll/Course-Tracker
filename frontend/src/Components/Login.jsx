@@ -2,7 +2,7 @@ import {useState} from 'react'
 import getUser from '../services/login.js'
 import styles from '../styles.js'
 
-const Login = ({display, toggle}) => {
+const Login = ({display, toggle, status}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [displayPassword, setDisplayPassword] = useState(false)
@@ -25,9 +25,10 @@ const Login = ({display, toggle}) => {
             const user = await getUser(username, password)
             window.localStorage.setItem('token', user.token)
             window.localStorage.setItem('name', user.name)
+            status('success', `Login successful for user "${user.name}"`)
             toggleScreen()
         }catch(error){
-            alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
    

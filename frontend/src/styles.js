@@ -26,6 +26,23 @@ const styles = {
         border: 1,
         borderStyle: 'solid',
         borderColor: 'black'
+    },
+
+    notification: {
+        background: 'lightgrey',
+        fontSize: 20,
+        borderStyle: 'solid',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10
+    },
+
+    success: {
+        color: 'green'
+    },
+
+    failure: {
+        color: 'red'
     }
 }
 

@@ -2,7 +2,7 @@ import {useState} from 'react'
 import createUser from '../services/user.js'
 import styles from '../styles.js'
 
-const CreateUser = ({display, toggle}) => {
+const CreateUser = ({display, toggle, status}) => {
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -18,12 +18,12 @@ const CreateUser = ({display, toggle}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            const message = await createUser(name, username, password)
-            alert(message)
+            await createUser(name, username, password)
+            status('success', `Created user ${name}`)
             setUsername('')
             setPassword('')
         }catch(error){
-            alert(error.response.data)
+            status('failure', error.response?.data || error.message)
         }
     }
 
