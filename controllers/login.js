@@ -16,17 +16,19 @@ loginRouter.post('/', async (request, response, next) => {
         username: user?.username,
         id: user?._id.toString()
     }
-    const authToken = await bcrypt.compare(password, user?.passwordHash) ? jwt.sign(tokenUser, config.secret) : null
-    if(!(user && authToken)){
+
+    if(user && await bcrypt.compare(password, user?.passwordHash)){
+        const authToken = jwt.sign(tokenUser, config.secret)
+        response.status(200).send({
+            token: authToken,
+            username: user.username,
+            name: user.name
+        })
+    } else{
         next({
             name: 'AuthenticationError'
         })
     }
-    response.status(200).send({
-        token: authToken,
-        username: user.username,
-        name: user.name
-    })
 })
 
 module.exports = loginRouter

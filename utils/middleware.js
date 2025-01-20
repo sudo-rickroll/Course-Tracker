@@ -30,7 +30,8 @@ const unknownHandler = (request, response, next) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-    logger.error('Error: ', error.error || error.message)
+    console.log(error)
+    logger.error('Error: ', error.error || error.message || error.name)
     switch(error.name){
     case('ValidationError'):
         return response.status(400).send('Fields marked required cannot be empty')
