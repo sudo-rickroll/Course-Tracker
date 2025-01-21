@@ -2,15 +2,11 @@ import {useState} from 'react'
 import createUser from '../services/user.js'
 import styles from '../styles.js'
 
-const CreateUser = ({display, toggle, status}) => {
+const CreateUser = ({toggleDisplay, showStatus}) => {
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [displayPassword, setDisplayPassword] = useState(false)
-
-    if(!display){
-        return null
-    }
 
     const handleNameChange = ({target}) => setName(target.value)
     const handleUsernameChange = ({target}) => setUsername(target.value)
@@ -19,19 +15,15 @@ const CreateUser = ({display, toggle, status}) => {
         e.preventDefault()
         try{
             await createUser(name, username, password)
-            status('success', `Created user ${name}`)
+            showStatus('success', `Created user ${name}`)
             setUsername('')
-            setPassword('')
+            setPassword()
+            toggleDisplay()
         }catch(error){
-            status('failure', error.response?.data || error.message)
+            showStatus('failure', error.response?.data || error.message)
         }
     }
 
-    const toggleScreen = () => {
-        toggle()
-        setUsername('')
-        setPassword('')
-    }
     const togglePasswordDisplay = () => setDisplayPassword(!displayPassword)
 
 
@@ -55,8 +47,8 @@ const CreateUser = ({display, toggle, status}) => {
             </div>
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
-                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>{'Create'}</button>
-                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={toggleScreen} type='button'>{'Go to Login Page'}</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>Create</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleDisplay()} type='button'>Cancel</button>
             </div>
         </form>
     )

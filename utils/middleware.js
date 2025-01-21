@@ -18,8 +18,7 @@ const tokenExtractor = async (request, response, next) => {
 }
 
 const userExtractor = async (request, response, next) => {
-    const user = jwt.verify(request.token, config.secret)
-    request['user'] = user?.id || null
+    request['user'] = request.token ? jwt.verify(request.token, config.secret).id : null
     next()
 }
 
@@ -42,7 +41,7 @@ const errorHandler = (error, request, response, next) => {
         return response.status(400).send('Username or Password incorrect')
 
     case('AuthorizationError'):
-        return response.status(400).send('This user does not have the privileges to perform this action')
+        return response.status(400).send(error.message || 'This user does not have the privileges to perform this action')
 
     case('JsonWebTokenError'):
         return response.status(400).send('Invalid session')

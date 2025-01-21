@@ -2,33 +2,24 @@ import {useState} from 'react'
 import getUser from '../services/login.js'
 import styles from '../styles.js'
 
-const Login = ({display, toggle, status}) => {
+const Login = ({toggleDisplay, showStatus}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [displayPassword, setDisplayPassword] = useState(false)
 
-    if(!display){
-        return null
-    }
-
     const handleUsernameChange = ({target}) => setUsername(target.value)
     const handlePasswordChange = ({target}) => setPassword(target.value)
 
-    const toggleScreen = () => {
-        setUsername('')
-        setPassword('')
-        toggle()
-    }
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             const user = await getUser(username, password)
             window.localStorage.setItem('token', user.token)
             window.localStorage.setItem('name', user.name)
-            status('success', `Login successful for user "${user.name}"`)
-            toggleScreen()
+            showStatus('success', `Login successful for user "${user.name}"`)
+            toggleDisplay()
         }catch(error){
-            status('failure', error.response?.data || error.message)
+            showStatus('failure', error.response?.data || error.message)
         }
     }
    
@@ -49,8 +40,8 @@ const Login = ({display, toggle, status}) => {
             </div>
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
-                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>{'Login'}</button>
-                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={toggleScreen} type='button'>{'Create User'}</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>Authorize</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleDisplay()} type='button'>Cancel</button>
             </div>
         </form>
     )

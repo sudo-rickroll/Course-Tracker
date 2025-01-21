@@ -19,6 +19,10 @@ const courseSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    likes: {
+        type: Number,
+        required: true
     }
 })
 
