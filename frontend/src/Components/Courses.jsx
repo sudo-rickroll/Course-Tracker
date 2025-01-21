@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import { getCourses, createCourse, updateCourse, deleteCourse } from '../services/course.js'
+import { getCourses, createCourse, updateCourse, deleteCourse, incrementLikes } from '../services/course.js'
 import Course from './Course.jsx'
 import CourseForm from './CourseForm.jsx'
 
@@ -57,9 +57,19 @@ const Courses = ({exit, status}) => {
     
     const deleteExistingCourse = async (course) => {
         try{
-            if(confirm(`Are you sure you want to delete "${course.title}"?`))
-            await deleteCourse(course.id)
-            status('success', `Course "${course.title}" deleted successfully`)
+            if(confirm(`Are you sure you want to delete "${course.title}"?`)){
+                await deleteCourse(course.id)
+                status('success', `Course "${course.title}" deleted successfully`)
+                refreshCourses()
+            }
+        }catch(error){
+            status('failure', error.response?.data || error.message)
+        }
+    }
+
+    const updateLikes = async (course) => {
+        try{
+            await incrementLikes(course.id)
             refreshCourses()
         }catch(error){
             status('failure', error.response?.data || error.message)
@@ -83,7 +93,7 @@ const Courses = ({exit, status}) => {
             <h1>Welcome, {window.localStorage.getItem('name')} <button onClick = {handleLogout}>Logout</button></h1>
             
             <br/>
-            {courses.map(course => <Course key={course.id} course={course} deleteCourse={deleteExistingCourse} setDetails={setCourseDetails}></Course>)}
+            {courses.map(course => <Course key={course.id} course={course} deleteCourse={deleteExistingCourse} addLike={updateLikes} setDetails={setCourseDetails}></Course>)}
             <br/>
             <div>
                 <button onClick={toggleNewDisplay}>Create New Course</button>

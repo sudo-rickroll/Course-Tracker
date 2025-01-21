@@ -22,9 +22,12 @@ const deleteCourse = async (id) => await axios.delete(`${baseUrl}/${id}`, setHea
 
 const updateCourse = async (id, data) => await axios.put(`${baseUrl}/${id}`, data, setHeaders())
 
+const incrementLikes = async id => await axios.patch(`${baseUrl}/${id}`, null, setHeaders()) 
+
 export {
     getCourses,
     createCourse,
     deleteCourse,
-    updateCourse
+    updateCourse,
+    incrementLikes
 }
