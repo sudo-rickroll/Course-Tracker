@@ -5,7 +5,6 @@ import CourseForm from './CourseForm.jsx'
 
 const Courses = ({exit, showStatus}) => {
     const [courses, setCourses] = useState([])
-    const [newCourse, setNewCourse] = useState(false)
     const [course, setCourse] = useState(null)
 
     const refreshCourses = async () => {
@@ -25,28 +24,6 @@ const Courses = ({exit, showStatus}) => {
     const toggleEditDisplay = () => setCourse({})
 
     const setCourseDetails = (course) => setCourse(course)
-
-    const createNewCourse = async (course) => {
-        try{
-            await createCourse(course)
-            showStatus('success', `Course "${course.title}" created successfully`)
-            refreshCourses()
-            toggleNewDisplay()
-        }catch(error){
-            showStatus('failure', error.response?.data || error.message)
-        }
-    }
-
-    const editExistingCourse = async (updatedCourse) => {
-        try{
-            await updateCourse(course.id, updatedCourse)
-            showStatus('success', `Course "${course.title}" updated successfully`)
-            refreshCourses()
-            toggleEditDisplay()
-        }catch(error){
-            showStatus('failure', error.response?.data || error.message)
-        }
-    }
     
     const deleteExistingCourse = async (course) => {
         try{
@@ -69,26 +46,9 @@ const Courses = ({exit, showStatus}) => {
         }
     }
 
-    if(newCourse){
-        return (
-            <CourseForm toggleScreen = {toggleNewDisplay} modify = {createNewCourse} course={null}></CourseForm>
-        )
-    }
-
-    if(course?.title){
-        return (
-            <CourseForm toggleScreen = {toggleEditDisplay} modify = {editExistingCourse} course={course}></CourseForm>
-        )
-    }
-
     return (
         <>            
-            <br/>
             {courses.map(course => <Course key={course.id} course={course} deleteCourse={deleteExistingCourse} addLike={updateLikes} setDetails={setCourseDetails}></Course>)}
-            <br/>
-            <div>
-                <button onClick={toggleNewDisplay}>Create New Course</button>
-            </div>
         </>
     )
 }

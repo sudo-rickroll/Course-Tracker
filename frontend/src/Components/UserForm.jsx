@@ -2,7 +2,7 @@ import {useState} from 'react'
 import createUser from '../services/user.js'
 import styles from '../styles.js'
 
-const CreateUser = ({toggleDisplay, showStatus}) => {
+const UserForm = ({toggleVisibility, showStatus}) => {
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -18,7 +18,7 @@ const CreateUser = ({toggleDisplay, showStatus}) => {
             showStatus('success', `Created user ${name}`)
             setUsername('')
             setPassword()
-            toggleDisplay()
+            toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)
         }
@@ -48,10 +48,10 @@ const CreateUser = ({toggleDisplay, showStatus}) => {
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>Create</button>
-                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleDisplay()} type='button'>Cancel</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleVisibility()} type='button'>Cancel</button>
             </div>
         </form>
     )
 }
 
-export default CreateUser
+export default UserForm

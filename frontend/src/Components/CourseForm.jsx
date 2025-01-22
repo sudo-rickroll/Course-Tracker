@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import styles from '../styles.js'
+import { createCourse, updateCourse } from '../services/course.js'
 
-const CourseForm = ({toggleScreen, modify, course}) => {
+const CourseForm = ({course, toggleVisibility, showStatus}) => {
     const [title, setTitle] = useState(course?.title || '')
     const [author, setAuthor] = useState(course?.author || '')
     const [hours, setHours] = useState(course?.hours || 0)
@@ -18,22 +19,30 @@ const CourseForm = ({toggleScreen, modify, course}) => {
         setUrl(target.value)
     }
 
-    const createNew = async (e) => {
-        e.preventDefault()
-        if(!validateUrl){
-            await modify({title, author, hours, url})
+    const createNewCourse = async () => {
+        try{
+            const course = await createCourse(course)
+            showStatus('success', `Course "${course.title}" created successfully`)
+            //refreshCourses()
+            toggleVisibility()
+        }catch(error){
+            showStatus('failure', error.response?.data || error.message)
         }
     }
 
-    const editExisting = async (e) => {
-        e.preventDefault()
-        if(!validateUrl){
-            await modify({title, author, hours, url})
+    const editExistingCourse = async (id) => {
+        try{
+            await updateCourse(id, {title, author, hours, url})
+            showStatus('success', `Course "${title}" updated successfully`)
+            //refreshCourses()
+            toggleVisibility()
+        }catch(error){
+            showStatus('failure', error.response?.data || error.message)
         }
     }
 
     return (
-        <form style={styles.formDisplay} onSubmit={course? editExisting : createNew}>
+        <form style={styles.formDisplay} onSubmit={course? () => editExistingCourse(course.id) : createNewCourse}>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <label style={{...styles.elementDisplay, ...styles.margin}}>{'Title'}<label style={{...styles.required, ...styles.margin}}>{'*'}</label></label>
                 <input style={styles.margin} value={title} onChange={changeTitle}></input>
@@ -57,7 +66,7 @@ const CourseForm = ({toggleScreen, modify, course}) => {
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>{course? 'Update' : 'Create'}</button>
-                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={toggleScreen} type='button'>Back</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={toggleVisibility} type='button'>Back</button>
             </div>
         </form>
     )

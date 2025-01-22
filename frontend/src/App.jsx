@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import Login from './Components/Login.jsx'
-import CreateUser from './Components/CreateUser.jsx'
+import UserForm from './Components/UserForm.jsx'
 import Courses from './Components/Courses.jsx'
 import Notification from './Components/Notification.jsx'
-import Togglable from './Components/Togglable.jsx'
+import TogglableHome from './Components/TogglableHome.jsx'
+import TogglableCourse from './Components/TogglableCourse.jsx'
+import CourseForm from './Components/CourseForm.jsx'
 
 function App() {
   const [ notification, setNotification ] = useState({message: '', type: ''})
@@ -16,12 +18,15 @@ function App() {
 
   return (
     <>
-      <Notification type={notification.type} message={notification.message}></Notification>
-      <Togglable buttonLabels={['Login', 'Create account']} showStatus={showNotification}>
+      <Notification type={notification.type} message={notification.message} />
+      <TogglableHome buttonLabels={['Login', 'Create account']} showStatus={showNotification}>
           <Login />
-          <CreateUser />
-      </Togglable>
-      <Courses showStatus={showNotification}></Courses>
+          <UserForm />
+      </TogglableHome>
+      <TogglableCourse buttonLabel='Create course' showStatus={showNotification} >
+          <CourseForm course={null}/>
+      </TogglableCourse>
+      <Courses showStatus={showNotification} />
     </>
   )
 }

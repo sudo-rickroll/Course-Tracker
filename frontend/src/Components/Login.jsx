@@ -2,7 +2,7 @@ import {useState} from 'react'
 import getUser from '../services/login.js'
 import styles from '../styles.js'
 
-const Login = ({toggleDisplay, showStatus}) => {
+const Login = ({toggleVisibility, showStatus}) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [displayPassword, setDisplayPassword] = useState(false)
@@ -17,7 +17,7 @@ const Login = ({toggleDisplay, showStatus}) => {
             window.localStorage.setItem('token', user.token)
             window.localStorage.setItem('name', user.name)
             showStatus('success', `Login successful for user "${user.name}"`)
-            toggleDisplay()
+            toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)
         }
@@ -41,7 +41,7 @@ const Login = ({toggleDisplay, showStatus}) => {
             <br/>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <button style={{...styles.elementDisplay, ...styles.margin}} type='submit'>Authorize</button>
-                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleDisplay()} type='button'>Cancel</button>
+                <button style={{...styles.elementDisplay, ...styles.margin}} onClick={() => toggleVisibility()} type='button'>Cancel</button>
             </div>
         </form>
     )
