@@ -6,31 +6,25 @@ import Notification from './Components/Notification.jsx'
 import TogglableHome from './Components/TogglableHome.jsx'
 import TogglableCourse from './Components/TogglableCourse.jsx'
 import CourseForm from './Components/CourseForm.jsx'
-import { getCourses } from './services/course.js'
 
 function App() {
   const [ notification, setNotification ] = useState({message: '', type: ''})
   const [user, setUser] = useState(null)
-  const [courses, setCourses] = useState([])
+  
 
   const showNotification = (type, message) => {
     setNotification({message, type})
     setTimeout(() => setNotification({message: '', type: ''}), 5000)
   }
 
-  const refreshCourses = async (id = null) => {
-    const courseList = await getCourses()
-    id ? setCourses(courseList.filter(course => course.user === id)) : setCourses(courseList)    
-  }
+  
 
   const validateSession = () => {
     window.localStorage.getItem('token') ? setUser(window.localStorage.getItem('userId')) : setUser('')
   }
 
   useEffect(() => {
-    refreshCourses().then(() => {
-        validateSession()
-    }).catch(error => setNotification('failure', error.response?.data || error.message))
+    validateSession()    
   }, [notification])
 
 
@@ -42,10 +36,10 @@ function App() {
           <UserForm />
       </TogglableHome>
       
-      <TogglableCourse buttonLabel='Create course' showStatus={showNotification} loggedIn={user}>
-          <CourseForm course={null} refreshCourses={refreshCourses} />
+      <TogglableCourse buttonLabel={['Create course','All Courses','My Courses']}showStatus={showNotification} loggedIn={user}>
+          <CourseForm />
+          <Courses />
       </TogglableCourse>
-      <Courses courses={courses} refreshCourses={refreshCourses} showStatus={showNotification} loggedIn={user}/>
     </>
   )
 }

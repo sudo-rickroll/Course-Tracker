@@ -45,7 +45,7 @@ const Course = ({course, refreshCourses, showStatus, loggedIn}) => {
                     <p>can be found at <a href={course.url}>{course.url}</a></p>
                 </div>
                 <p><b>{course.likes || 0}</b> likes {loggedIn? <button onClick={increaseLikes}>Like</button> : null}</p>
-                {loggedIn? <><button onClick={toggleView}>Edit</button><button onClick={deleteRecord}>Delete</button></> : null}
+                {loggedIn && window.localStorage.getItem('userId') === course.user?.id ? <><button onClick={toggleView}>Edit</button><button onClick={deleteRecord}>Delete</button></> : null}
             </div>
             <div style={{...styles.border, ...styles.margin, ...showWhenEdit}}>
                 <CourseForm course={course} refreshCourses={refreshCourses} toggleVisibility={toggleView} showStatus={showStatus}></CourseForm>

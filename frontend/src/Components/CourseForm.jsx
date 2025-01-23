@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from '../styles.js'
 import { createCourse, updateCourse } from '../services/course.js'
 
@@ -22,14 +22,13 @@ const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
     const createNewCourse = async (e) => {
         e.preventDefault()
         try{
-            console.log(title)
             await createCourse({title, author, hours, url})
             setTitle('')
             setAuthor('')
             setHours(0)
             setUrl('')
             showStatus('success', `Course "${title}" created successfully`)
-            refreshCourses()
+            await refreshCourses()
             toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)
@@ -39,9 +38,9 @@ const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
     const editExistingCourse = async (e, id) => {
         e.preventDefault()
         try{
-            await updateCourse(id, {title, author, hours, url})
-            showStatus('success', `Course "${title}" updated successfully`)
-            refreshCourses()
+            const updatedCourse = await updateCourse(id, {title, author, hours, url})
+            showStatus('success', `Course "${course.title}" updated successfully`)
+            await refreshCourses()
             toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)

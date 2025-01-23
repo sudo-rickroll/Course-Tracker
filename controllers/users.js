@@ -4,13 +4,13 @@ const bcrypt = require('bcrypt')
 const config = require('../utils/config.js')
 
 userRouter.get('/', async (request, response) => {
-    const users = await User.find({}).populate('courses')
+    const users = await User.find({}).populate('courses', { title: 1 })
     response.status(200).json(users)
 
 })
 
 userRouter.get('/:id', async (request, response) => {
-    const user = await User.findById(request.params.id)
+    const user = await User.findById(request.params.id).populate('courses', { title: 1 })
     response.status(200).json(user)
 })
 
