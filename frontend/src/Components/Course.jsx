@@ -28,6 +28,7 @@ const Course = ({course, refreshCourses, showStatus, loggedIn}) => {
         try{
             if(confirm(`Are you sure you want to delete the course "${course.title}"`)){
                 await deleteCourse(course.id)
+                showStatus('success', `Deleted course ${course.title} successfully`)
                 refreshCourses()
             }
         }catch(error){
