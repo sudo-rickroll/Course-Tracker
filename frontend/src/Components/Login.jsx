@@ -16,6 +16,7 @@ const Login = ({toggleVisibility, showStatus}) => {
             const user = await getUser(username, password)
             window.localStorage.setItem('token', user.token)
             window.localStorage.setItem('name', user.name)
+            window.localStorage.setItem('userId', user.id)
             showStatus('success', `Login successful for user "${user.name}"`)
             toggleVisibility()
         }catch(error){

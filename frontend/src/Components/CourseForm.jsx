@@ -2,7 +2,7 @@ import { useState } from 'react'
 import styles from '../styles.js'
 import { createCourse, updateCourse } from '../services/course.js'
 
-const CourseForm = ({course, toggleVisibility, showStatus}) => {
+const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
     const [title, setTitle] = useState(course?.title || '')
     const [author, setAuthor] = useState(course?.author || '')
     const [hours, setHours] = useState(course?.hours || 0)
@@ -19,22 +19,29 @@ const CourseForm = ({course, toggleVisibility, showStatus}) => {
         setUrl(target.value)
     }
 
-    const createNewCourse = async () => {
+    const createNewCourse = async (e) => {
+        e.preventDefault()
         try{
-            const course = await createCourse(course)
-            showStatus('success', `Course "${course.title}" created successfully`)
-            //refreshCourses()
+            console.log(title)
+            await createCourse({title, author, hours, url})
+            setTitle('')
+            setAuthor('')
+            setHours(0)
+            setUrl('')
+            showStatus('success', `Course "${title}" created successfully`)
+            refreshCourses()
             toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)
         }
     }
 
-    const editExistingCourse = async (id) => {
+    const editExistingCourse = async (e, id) => {
+        e.preventDefault()
         try{
             await updateCourse(id, {title, author, hours, url})
             showStatus('success', `Course "${title}" updated successfully`)
-            //refreshCourses()
+            refreshCourses()
             toggleVisibility()
         }catch(error){
             showStatus('failure', error.response?.data || error.message)
@@ -42,7 +49,7 @@ const CourseForm = ({course, toggleVisibility, showStatus}) => {
     }
 
     return (
-        <form style={styles.formDisplay} onSubmit={course? () => editExistingCourse(course.id) : createNewCourse}>
+        <form style={styles.formDisplay} onSubmit={course? (e) => editExistingCourse(e, course.id) : createNewCourse}>
             <div style={{...styles.divDisplay, ...styles.margin}}>
                 <label style={{...styles.elementDisplay, ...styles.margin}}>{'Title'}<label style={{...styles.required, ...styles.margin}}>{'*'}</label></label>
                 <input style={styles.margin} value={title} onChange={changeTitle}></input>

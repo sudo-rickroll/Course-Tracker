@@ -12,6 +12,7 @@ const TogglableHome = (props) => {
     const handleLogout = () => {
         window.localStorage.removeItem('token')
         window.localStorage.removeItem('name')
+        window.localStorage.removeItem('userId')
         props.showStatus('success', 'Logged out successfully')
         setVisible(null)
     }

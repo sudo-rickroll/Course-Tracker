@@ -8,8 +8,8 @@ const TogglableCourse = (props) => {
         return null
     }
 
-    const showWhenVisible = {display: visible ? '' : 'none'}
-    const hideWhenVisible = {display: visible ? 'none' : ''}
+    const showWhenVisible = {display: !props.loggedIn ? 'none' : visible ? '' : 'none'}
+    const hideWhenVisible = {display: !props.loggedIn ? 'none' : visible ? 'none' : ''}
 
     const toggleVisibility = () => setVisible(!visible)
 
@@ -17,6 +17,8 @@ const TogglableCourse = (props) => {
         <>
             <div style={hideWhenVisible}>
                 <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+                <br/><br/>
+                <button onClick={null}>All Courses</button><button onClick={null}>My Courses</button>
             </div>
             <div style={showWhenVisible}>
                 {cloneElement(props.children, {toggleVisibility, showStatus: props.showStatus})}
