@@ -5,5 +5,6 @@ The demonstrative version of the application is hosted [here](https://course-tra
 
 Some features like viewing course tabs, updating/deleting courses, and sorting only appear once you are logged in. You can only edit or delete courses that are uploaded by you. For the rest, you can just view or like the courses.
 
-![Working version of the app](https://github.com/user-attachments/assets/e022324a-beac-4f55-98e7-2b48d9012d0f)
+![Working version of the app](https://github.com/user-attachments/assets/84219942-125c-4713-bff7-e2ef99dfa59a)
+
 
