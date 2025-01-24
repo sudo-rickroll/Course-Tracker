@@ -3,4 +3,4 @@ This is an application built to maintain an inventory of courses. It is built us
 
 The demonstrative version of the application is hosted [here](https://course-tracker-mw6v.onrender.com/)
 
-![Working version of the app](image.png)
+![Working version of the app](image-1.png)
