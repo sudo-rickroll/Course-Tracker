@@ -3,8 +3,8 @@ const Course = require('../models/course.js')
 const User = require('../models/user.js')
 
 courseRouter.get('/', async (request, response) => {
-    const course = await Course.find({}).populate('user', {id: 1, username: 1})
-    response.status(200).json(course)
+    const courses = await Course.find({}).populate('user', {id: 1, name: 1})
+    response.status(200).json(courses)
 })
 
 courseRouter.post('/', async (request, response, next) => {
