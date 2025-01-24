@@ -55,7 +55,7 @@ const TogglableCourse = (props) => {
 
     useEffect(() => {
         refreshCourses()
-      })
+      }, [])
 
     const toggleVisibility = () => setVisible(!visible)
 
