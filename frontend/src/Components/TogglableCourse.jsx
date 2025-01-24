@@ -6,17 +6,29 @@ const TogglableCourse = (props) => {
     const [visible, setVisible] = useState(null)
     const [courses, setCourses] = useState([])
 
+    const [allCourses, setAllCourses] = useState(true)
+
+    const allCourseSelected = {
+        backgroundColor: allCourses? 'rgba(230, 216, 171, 0.93)' : ''
+    }
+
+    const myCourseSelected = {
+        backgroundColor: allCourses? '' : 'rgba(230, 216, 171, 0.93)'
+    }
+
+    const toggleView = (e) => {
+        if(e.target.innerHTML === props.buttonLabel[2]){
+            setAllCourses(false)
+            return
+        }
+        setAllCourses(true)
+    }
     const showWhenVisible = {display: !props.loggedIn ? 'none' : visible ? '' : 'none'}
     const hideWhenVisible = {display: !props.loggedIn ? 'none' : visible ? 'none' : ''}
 
-    const refreshCourses = async (e=null, id = null) => {
-        if(id){
-            setCourses(courses.filter(course => course.user?.id === id))
-            return
-        }        
-        const courseList = await getCourses()
-        setCourses(courseList)  
-    }
+    const refreshCourses = async () => setCourses(await getCourses())
+
+
 
     useEffect(() => {
         refreshCourses()
@@ -29,12 +41,12 @@ const TogglableCourse = (props) => {
             <div style={hideWhenVisible}>
                 <button onClick={toggleVisibility}>{props.buttonLabel[0]}</button>
                 <br/><br/>
-                <button onClick={refreshCourses}>{props.buttonLabel[1]}</button><button onClick={(e) => refreshCourses(e, window.localStorage.getItem('userId'))}>{props.buttonLabel[2]}</button>
+                <button style={allCourseSelected} onClick={toggleView}>{props.buttonLabel[1]}</button><button style={myCourseSelected} onClick={toggleView} >{props.buttonLabel[2]}</button>
             </div>
             <div style={showWhenVisible}>
                 {cloneElement(props.children[0], {course: null, refreshCourses, toggleVisibility, showStatus: props.showStatus})}
             </div>
-            {cloneElement(props.children[1], {courses: courses, refreshCourses, toggleVisibility, showStatus: props.showStatus, loggedIn: props.loggedIn})}
+            {cloneElement(props.children[1], {courses: !allCourses && props.loggedIn ? courses.filter(course => course.user?.id === window.localStorage.getItem('userId')) : courses , refreshCourses, toggleVisibility, showStatus: props.showStatus, loggedIn: props.loggedIn})}
         </>
     )
 }
