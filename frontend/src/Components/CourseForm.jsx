@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import styles from '../styles.js'
 import { createCourse, updateCourse } from '../services/course.js'
+import PropTypes from 'prop-types'
 
 const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
     const [title, setTitle] = useState(course?.title || '')
@@ -38,7 +39,7 @@ const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
     const editExistingCourse = async (e, id) => {
         e.preventDefault()
         try{
-            const updatedCourse = await updateCourse(id, {title, author, hours, url})
+            await updateCourse(id, {title, author, hours, url})
             showStatus('success', `Course "${course.title}" updated successfully`)
             await refreshCourses()
             toggleVisibility()
@@ -76,6 +77,13 @@ const CourseForm = ({course, refreshCourses, toggleVisibility, showStatus}) => {
             </div>
         </form>
     )
+}
+
+CourseForm.propTypes = {
+    course: PropTypes.object,
+    refreshCourses: PropTypes.func,
+    toggleVisibility: PropTypes.func,
+    showStatus: PropTypes.func
 }
 
 export default CourseForm

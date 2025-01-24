@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import createUser from '../services/user.js'
 import styles from '../styles.js'
+import PropTypes from 'prop-types'
 
 const UserForm = ({toggleVisibility, showStatus}) => {
     const [name, setName] = useState('')
@@ -52,6 +53,11 @@ const UserForm = ({toggleVisibility, showStatus}) => {
             </div>
         </form>
     )
+}
+
+UserForm.propTypes = {
+    toggleVisibility: PropTypes.func,
+    showStatus: PropTypes.func
 }
 
 export default UserForm

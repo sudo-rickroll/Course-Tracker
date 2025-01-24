@@ -36,7 +36,7 @@ function App() {
           <UserForm />
       </TogglableHome>
       
-      <TogglableCourse buttonLabel={['Create course','All Courses','My Courses']}showStatus={showNotification} loggedIn={user}>
+      <TogglableCourse buttonLabel={['Create course','All Courses','My Courses']} showStatus={showNotification} loggedIn={user}>
           <CourseForm />
           <Courses />
       </TogglableCourse>

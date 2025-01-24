@@ -1,6 +1,7 @@
 import {useState} from 'react'
 import getUser from '../services/login.js'
 import styles from '../styles.js'
+import PropTypes from 'prop-types'
 
 const Login = ({toggleVisibility, showStatus}) => {
     const [username, setUsername] = useState('')
@@ -46,6 +47,11 @@ const Login = ({toggleVisibility, showStatus}) => {
             </div>
         </form>
     )
+}
+
+Login.propTypes = {
+    toggleVisibility: PropTypes.func,
+    showStatus: PropTypes.func
 }
 
 export default Login

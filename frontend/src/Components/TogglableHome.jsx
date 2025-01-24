@@ -1,4 +1,5 @@
 import { cloneElement, useState } from 'react'
+import PropTypes from 'prop-types'
 
 const TogglableHome = (props) => {
     const [visible, setVisible] = useState(null)
@@ -37,6 +38,12 @@ const TogglableHome = (props) => {
             </div>
         </>
     )
+}
+
+TogglableHome.propTypes = {
+    buttonLabels: PropTypes.array.isRequired,
+    showStatus: PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired
 }
 
 export default TogglableHome

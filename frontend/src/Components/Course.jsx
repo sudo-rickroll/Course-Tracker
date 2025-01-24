@@ -2,6 +2,7 @@ import { useState } from 'react'
 import styles from '../styles.js'
 import CourseForm from './CourseForm.jsx'
 import { deleteCourse, incrementLikes } from '../services/course.js'
+import PropTypes from 'prop-types'
 
 const Course = ({course, refreshCourses, showStatus, loggedIn}) => {
 
@@ -41,11 +42,12 @@ const Course = ({course, refreshCourses, showStatus, loggedIn}) => {
             <div style={{...styles.border, ...styles.margin, ...showWhenRead}}>
                 <p><b>{course.title}</b><button onClick={toggleVisibility}>{visible?'Hide':'Show'}</button></p>
                 <div style= {showWhenVisible}>
-                    {course.author ? <p>by <b>{course.author}</b></p> : null}
+                    {course.author ? <p>authored by <b>{course.author}</b></p> : null}
                     <p><b>{course.hours}</b> hours spent</p>
                     <p>can be found at <a href={course.url}>{course.url}</a></p>
+                    <p>created by <b>{course.user.name}</b></p>
                 </div>
-                <p><b>{course.likes || 0}</b> likes {loggedIn? <button onClick={increaseLikes}>Like</button> : null}</p>
+                <p><b>{course.likes}</b> likes {loggedIn? <button onClick={increaseLikes}>Like</button> : null}</p>
                 {loggedIn && window.localStorage.getItem('userId') === course.user?.id ? <><button onClick={toggleView}>Edit</button><button onClick={deleteRecord}>Delete</button></> : null}
             </div>
             <div style={{...styles.border, ...styles.margin, ...showWhenEdit}}>
@@ -53,6 +55,16 @@ const Course = ({course, refreshCourses, showStatus, loggedIn}) => {
             </div>
         </>
     )
+}
+
+Course.propTypes = {
+    course: PropTypes.object.isRequired,
+    refreshCourses: PropTypes.func.isRequired,
+    showStatus: PropTypes.func.isRequired,
+    loggedIn: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.oneOf([null])
+        ])
 }
 
 export default Course
